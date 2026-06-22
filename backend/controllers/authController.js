@@ -75,6 +75,7 @@ export const login = async (req, res) => {
 
 // SEND EMAIL OTP
 export const sendOtp = async (req, res) => {
+   console.log("🔥 SEND OTP HIT");  
   try {
     const { email } = req.body;
 
