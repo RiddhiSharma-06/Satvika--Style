@@ -6,7 +6,7 @@ import productRoutes from "./routes/productRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import connectDB from "./config/db.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
-import adminOrderRoutes from "./routes/adminOrderRoutes.js";
+import adminOrderRoutes from "./routes/adminorderRoutes.js";
 dotenv.config();
 
 const app = express();
