@@ -12,6 +12,8 @@ function Signup() {
 
   // SEND OTP
   const sendOtp = async () => {
+    console.log("SEND OTP CLICKED"); // ✅ correct place
+
     try {
       if (!name || !email) {
         alert("Please fill all details");

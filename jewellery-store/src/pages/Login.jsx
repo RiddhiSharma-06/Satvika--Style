@@ -11,6 +11,7 @@ function Login() {
 
   // SEND OTP
   const sendOtp = async () => {
+     console.log("SEND OTP CLICKED");
     try {
       if (!email) {
         alert("Enter Email");
@@ -26,6 +27,7 @@ function Login() {
         error.response?.data?.message || "Failed to send OTP"
       );
     }
+    
   };
 
   // VERIFY OTP
