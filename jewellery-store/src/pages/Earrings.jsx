@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 // images
@@ -41,7 +42,26 @@ function Earrings() {
 
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [dbProducts, setDbProducts] = useState([]);
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
+  const fetchProducts = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:5000/api/products"
+      );
+
+      const earringsOnly = res.data.filter(
+        (item) => item.category === "Earrings"
+      );
+
+      setDbProducts(earringsOnly);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   // login check
   const checkLogin = () => {
     const isLoggedIn = localStorage.getItem("isLoggedIn");
@@ -179,6 +199,23 @@ function Earrings() {
       images: [earring7, earring7a, earring7b, earring7c],
     },
   ];
+  const allProducts = [
+  ...products,
+
+  ...dbProducts.map((item) => ({
+    id: item._id,
+    name: item.name,
+    price: `₹${item.price}`,
+    oldPrice: "",
+    offer: "",
+    stock:
+      item.stock > 0
+        ? "In Stock"
+        : "Out Of Stock",
+    image: item.images?.[0] || "",
+    images: item.images || [],
+  })),
+];
 
   return (
     <div className="px-8 md:px-16 py-20 bg-pink-50 min-h-screen">
@@ -189,15 +226,17 @@ function Earrings() {
 
       {/* PRODUCTS */}
       <div className="grid md:grid-cols-3 gap-10">
-        {products.map((product) => (
+        {allProducts.map((product) => (
           <div key={product.id} className="bg-white rounded-3xl shadow-xl overflow-hidden">
 
             <img
-              src={product.image}
+              src={product.image || product.images?.[0]}
               className="h-96 w-full object-cover cursor-pointer"
               onClick={() => {
-                setSelectedProduct(product);
-                setSelectedImage(product.image);
+              setSelectedProduct(product);
+              setSelectedImage(
+              product.image || product.images?.[0]
+              );
               }}
             />
 
@@ -262,7 +301,7 @@ function Earrings() {
               X
             </button>
 
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 
               <img
                 src={selectedImage}
@@ -294,7 +333,7 @@ function Earrings() {
                 </button>
 
                 <div className="flex gap-3 mt-5 flex-wrap">
-                  {selectedProduct.images.map((img, i) => (
+                  {selectedProduct.images?.map((img, i) => (
                     <img
                       key={i}
                       src={img}

@@ -5,6 +5,7 @@ const productSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
+      trim: true,
     },
 
     description: {
@@ -15,21 +16,36 @@ const productSchema = new mongoose.Schema(
     price: {
       type: Number,
       required: true,
+      min: 0,
     },
 
-    image: {
-      type: String,
-      required: true,
+    images: {
+      type: [String],
+      default: [],
     },
 
     category: {
       type: String,
       required: true,
+      enum: [
+        "Necklaces",
+        "Earrings",
+        "Rings",
+        "Anklets",
+        "Women Suits",
+      ],
+    },
+
+    // NEW FIELD FOR SUITS
+    size: {
+      type: String,
+      default: "",
     },
 
     stock: {
       type: Number,
       default: 0,
+      min: 0,
     },
 
     isOutOfStock: {
@@ -42,7 +58,9 @@ const productSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model(
-  "Product",
-  productSchema
-);
+// Automatically update stock status
+productSchema.pre("save", function () {
+  this.isOutOfStock = this.stock <= 0;
+});
+
+export default mongoose.model("Product", productSchema);

@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import AdminLayout from "../../layouts/AdminLayout";
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
   const fetchOrders = async () => {
     try {
@@ -16,203 +21,189 @@ const AdminOrders = () => {
     }
   };
 
-  const updateStatus = async (
-    id,
-    status
-  ) => {
+  const updateStatus = async (id, status) => {
     try {
       await axios.put(
         `http://localhost:5000/api/orders/${id}/status`,
         { status }
       );
 
+      alert("Status Updated");
+
       fetchOrders();
     } catch (error) {
       console.log(error);
+      alert("Error updating status");
     }
   };
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
   return (
-    <div className="p-6 bg-pink-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6">
-        Manage Orders
-      </h1>
+    <AdminLayout>
+      <div className="p-6 bg-pink-50 min-h-screen">
+        <h1 className="text-3xl font-bold mb-6">
+          Manage Orders
+        </h1>
 
-      {orders.length === 0 ? (
-        <p>No orders found</p>
-      ) : (
-        orders.map((order) => (
-          <div
-            key={order._id}
-            className="bg-white p-6 rounded-xl shadow mb-6"
-          >
-            <h2 className="text-xl font-bold">
-              Order ID: {order.orderId}
-            </h2>
+        {orders.length === 0 ? (
+          <h2>No Orders Found</h2>
+        ) : (
+          orders.map((order) => (
+            <div
+              key={order._id}
+              className="bg-white rounded-xl shadow-lg p-6 mb-8"
+            >
+              {/* Order Header */}
+              <div className="border-b pb-4 mb-4">
+                <h2 className="text-xl font-bold">
+                  Order ID : {order.orderId}
+                </h2>
 
-            <p className="mt-2">
-              <strong>Total:</strong> ₹
-              {order.total}
-            </p>
+                <p className="mt-2">
+                  <strong>Total :</strong> ₹{order.total}
+                </p>
 
-            <p>
-              <strong>Status:</strong>{" "}
-              {order.status}
-            </p>
+                <p>
+                  <strong>Status :</strong>{" "}
+                  <span className="text-blue-600 font-semibold">
+                    {order.status}
+                  </span>
+                </p>
 
-            <p>
-              <strong>UPI Transaction ID:</strong>{" "}
-              {order.upiTransactionId}
-            </p>
+                <p>
+                  <strong>Date :</strong> {order.date}
+                </p>
 
-            <p>
-              <strong>Date:</strong>{" "}
-              {order.date}
-            </p>
+                <p>
+                  <strong>UPI Transaction ID :</strong>{" "}
+                  {order.upiTransactionId}
+                </p>
+              </div>
 
-            {/* Customer Address */}
+              {/* Customer Details */}
+              <div className="mb-6">
+                <h3 className="text-lg font-bold mb-2">
+                  Customer Details
+                </h3>
 
-            <div className="mt-4">
-              <h3 className="font-bold">
-                Customer Address
-              </h3>
+                <p>
+                  <strong>Name :</strong>{" "}
+                  {order.address?.name}
+                </p>
 
-              <p>
-                {order.address?.name}
-              </p>
+                <p>
+                  <strong>Phone :</strong>{" "}
+                  {order.address?.phone}
+                </p>
 
-              <p>
-                {order.address?.phone}
-              </p>
+                <p>
+                  <strong>Address :</strong>{" "}
+                  {order.address?.houseNo},{" "}
+                  {order.address?.area}
+                </p>
 
-              <p>
-                {order.address?.houseNo},{" "}
-                {order.address?.area}
-              </p>
+                <p>
+                  {order.address?.city},{" "}
+                  {order.address?.state}
+                </p>
 
-              <p>
-                {order.address?.city},{" "}
-                {order.address?.state}
-              </p>
+                <p>
+                  {order.address?.pincode}
+                </p>
+              </div>
 
-              <p>
-                {order.address?.pincode}
-              </p>
-            </div>
+              {/* Products */}
+              <div className="mb-6">
+                <h3 className="text-lg font-bold mb-3">
+                  Purchased Products
+                </h3>
 
-            {/* Products */}
-
-            <div className="mt-4">
-              <h3 className="font-bold mb-2">
-                Products
-              </h3>
-
-              {order.items?.map(
-                (item, index) => (
+                {order.items?.map((item, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-4 mb-3 border-b pb-3"
+                    className="flex items-center gap-4 border rounded-lg p-3 mb-3"
                   >
                     <img
                       src={item.image}
                       alt={item.name}
-                      className="w-16 h-16 object-cover rounded"
+                      className="w-24 h-24 object-cover rounded"
                     />
 
                     <div>
-                      <p className="font-semibold">
+                      <h4 className="font-semibold">
                         {item.name}
+                      </h4>
+
+                      <p>
+                        Price : ₹{item.price}
                       </p>
 
                       <p>
-                        {item.price}
+                        Quantity : {item.quantity}
                       </p>
                     </div>
                   </div>
-                )
-              )}
-            </div>
-
-            {/* Payment Screenshot */}
-
-            {order.paymentScreenshot && (
-              <div className="mt-4">
-                <h3 className="font-bold mb-2">
-                  Payment Screenshot
-                </h3>
-
-                <a
-                  href={
-                    order.paymentScreenshot
-                  }
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-blue-600 underline"
-                >
-                  View Screenshot
-                </a>
+                ))}
               </div>
-            )}
 
-            {/* Status Buttons */}
+              {/* Payment Screenshot */}
+              {order.paymentScreenshot && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-bold mb-3">
+                    Payment Screenshot
+                  </h3>
 
-            <div className="flex gap-2 mt-6 flex-wrap">
-              <button
-                onClick={() =>
-                  updateStatus(
-                    order._id,
-                    "Confirmed"
-                  )
-                }
-                className="bg-green-500 text-white px-4 py-2 rounded"
-              >
-                Confirm
-              </button>
+                  <a
+                    href={order.paymentScreenshot}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <img
+                      src={order.paymentScreenshot}
+                      alt="Payment Screenshot"
+                      className="w-48 rounded-lg border"
+                    />
+                  </a>
+                </div>
+              )}
 
-              <button
-                onClick={() =>
-                  updateStatus(
-                    order._id,
-                    "Shipped"
-                  )
-                }
-                className="bg-blue-500 text-white px-4 py-2 rounded"
-              >
-                Ship
-              </button>
+              {/* Status Update */}
+              <div className="flex items-center gap-4 mt-6">
+                <select
+                  value={order.status}
+                  onChange={(e) =>
+                    updateStatus(
+                      order._id,
+                      e.target.value
+                    )
+                  }
+                  className="border p-3 rounded-lg"
+                >
+                  <option value="Pending">
+                    Pending
+                  </option>
 
-              <button
-                onClick={() =>
-                  updateStatus(
-                    order._id,
-                    "Delivered"
-                  )
-                }
-                className="bg-black text-white px-4 py-2 rounded"
-              >
-                Deliver
-              </button>
+                  <option value="Confirmed">
+                    Confirmed
+                  </option>
 
-              <button
-                onClick={() =>
-                  updateStatus(
-                    order._id,
-                    "Cancelled"
-                  )
-                }
-                className="bg-red-500 text-white px-4 py-2 rounded"
-              >
-                Cancel
-              </button>
+                  <option value="Shipped">
+                    Shipped
+                  </option>
+
+                  <option value="Delivered">
+                    Delivered
+                  </option>
+
+                  <option value="Cancelled">
+                    Cancelled
+                  </option>
+                </select>
+              </div>
             </div>
-          </div>
-        ))
-      )}
-    </div>
+          ))
+        )}
+      </div>
+    </AdminLayout>
   );
 };
 

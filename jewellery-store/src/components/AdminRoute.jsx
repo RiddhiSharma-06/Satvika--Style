@@ -1,12 +1,12 @@
 import { Navigate } from "react-router-dom";
 
 const AdminRoute = ({ children }) => {
-  const user = JSON.parse(
-    localStorage.getItem("user")
+  const adminUser = JSON.parse(
+    localStorage.getItem("adminUser")
   );
 
-  if (!user || user.role !== "admin") {
-    return <Navigate to="/admin/login" />;
+  if (!adminUser || adminUser.role !== "admin") {
+    return <Navigate to="/admin/login" replace />;
   }
 
   return children;

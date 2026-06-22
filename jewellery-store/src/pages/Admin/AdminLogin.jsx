@@ -1,9 +1,16 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
+
+  // Check if admin is already logged in
+  const admin = JSON.parse(localStorage.getItem("adminUser"));
+
+  if (admin?.role === "admin") {
+    return <Navigate to="/admin/dashboard" replace />;
+  }
 
   const [formData, setFormData] = useState({
     email: "",
@@ -31,25 +38,31 @@ const AdminLogin = () => {
         return;
       }
 
+      // Save admin separately
       localStorage.setItem(
-        "token",
+        "adminToken",
         res.data.token
       );
 
       localStorage.setItem(
-        "user",
+        "adminUser",
         JSON.stringify(res.data.user)
       );
 
+      alert("Admin Login Successful");
+
       navigate("/admin/dashboard");
     } catch (error) {
-      alert(error.response?.data?.message);
+      alert(
+        error.response?.data?.message ||
+          "Login failed"
+      );
     }
   };
 
   return (
     <div className="container mt-5">
-      <h2>Admin Login</h2>
+      <h2 className="mb-4">Admin Login</h2>
 
       <form onSubmit={handleSubmit}>
         <input
@@ -57,7 +70,9 @@ const AdminLogin = () => {
           name="email"
           placeholder="Email"
           className="form-control mb-3"
+          value={formData.email}
           onChange={handleChange}
+          required
         />
 
         <input
@@ -65,12 +80,14 @@ const AdminLogin = () => {
           name="password"
           placeholder="Password"
           className="form-control mb-3"
+          value={formData.password}
           onChange={handleChange}
+          required
         />
 
         <button
-          className="btn btn-dark"
           type="submit"
+          className="btn btn-dark"
         >
           Login
         </button>

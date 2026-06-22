@@ -1,73 +1,89 @@
 import { Link } from "react-router-dom";
+import AdminLayout from "../../layouts/AdminLayout";
 
 const AdminDashboard = () => {
-  const user = JSON.parse(
-    localStorage.getItem("user")
-  );
+  const user = JSON.parse(localStorage.getItem("adminUser"));
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-2">
+    <AdminLayout>
+      <h1 className="mb-3">
         Welcome, {user?.name}
       </h1>
 
-      <h2 className="text-xl mb-8">
+      <h3 className="mb-4">
         Admin Dashboard
-      </h2>
+      </h3>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        <Link
-          to="/admin/add-product"
-          className="border p-6 rounded-lg shadow hover:shadow-lg"
-        >
-          <h3 className="text-xl font-semibold">
-            Add Product
-          </h3>
+      <div className="row">
 
-          <p>
-            Create and upload new products.
-          </p>
-        </Link>
+        {/* Add Product */}
+        <div className="col-md-6 mb-4">
+          <Link
+            to="/admin/add-product"
+            className="text-decoration-none"
+          >
+            <div className="card shadow p-4">
+              <h4>Add Product</h4>
 
-        <Link
-          to="/admin/products"
-          className="border p-6 rounded-lg shadow hover:shadow-lg"
-        >
-          <h3 className="text-xl font-semibold">
-            Manage Products
-          </h3>
+              <p>
+                Create and upload new products.
+              </p>
+            </div>
+          </Link>
+        </div>
 
-          <p>
-            View, edit and delete products.
-          </p>
-        </Link>
+        {/* Products */}
+        <div className="col-md-6 mb-4">
+          <Link
+            to="/admin/products"
+            className="text-decoration-none"
+          >
+            <div className="card shadow p-4">
+              <h4>Manage Products</h4>
 
-        <Link
-          to="/admin/orders"
-          className="border p-6 rounded-lg shadow hover:shadow-lg"
-        >
-          <h3 className="text-xl font-semibold">
-            Manage Orders
-          </h3>
+              <p>
+                View, edit and delete products.
+              </p>
+            </div>
+          </Link>
+        </div>
 
-          <p>
-            Verify payments and confirm orders.
-          </p>
-        </Link>
+        {/* Orders */}
+        <div className="col-md-6 mb-4">
+          <Link
+            to="/admin/orders"
+            className="text-decoration-none"
+          >
+            <div className="card shadow p-4">
+              <h4>Manage Orders</h4>
 
-        <button
-          onClick={() => {
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
-            window.location.href =
-              "/admin/login";
-          }}
-          className="bg-red-500 text-white p-4 rounded"
-        >
-          Logout
-        </button>
+              <p>
+                Verify payments and confirm orders.
+              </p>
+            </div>
+          </Link>
+        </div>
+
+        {/* Logout */}
+        <div className="col-md-6 mb-4">
+          <div className="card shadow p-4">
+            <h4>Logout</h4>
+
+            <button
+              className="btn btn-danger mt-3"
+              onClick={() => {
+                 localStorage.removeItem("adminToken");
+                 localStorage.removeItem("adminUser");
+                window.location.href =
+                  "/admin/login";
+              }}
+            >
+              Logout
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 

@@ -6,6 +6,7 @@ import productRoutes from "./routes/productRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import connectDB from "./config/db.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
+import adminOrderRoutes from "./routes/adminOrderRoutes.js";
 dotenv.config();
 
 const app = express();
@@ -29,6 +30,7 @@ app.get("/", (req, res) => {
 });
 app.use("/api/auth", authRoutes);
 const PORT = process.env.PORT || 5000;
+app.use("/api/admin/orders", adminOrderRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server Running on ${PORT}`);

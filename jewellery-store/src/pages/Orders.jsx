@@ -3,8 +3,10 @@ import axios from "axios";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
-   
-  const user = JSON.parse(localStorage.getItem("user"));
+
+  const user = JSON.parse(
+    localStorage.getItem("user")
+  );
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -14,22 +16,29 @@ const Orders = () => {
         );
 
         const myOrders = res.data.filter(
-  (order) =>
-    String(order.userId) === String(user?.id)
-);
+          (order) =>
+            String(order.userId) ===
+            String(user?._id)
+        );
 
         setOrders(myOrders);
       } catch (error) {
-        console.log("Error fetching orders:", error);
+        console.log(
+          "Error fetching orders:",
+          error
+        );
       }
     };
 
-    if (user?.id) {
+    if (user?._id) {
       fetchOrders();
     }
-  }, [user?.id]);
+  }, [user?._id]);
 
-  const isCompleted = (currentStatus, targetStatus) => {
+  const isCompleted = (
+    currentStatus,
+    targetStatus
+  ) => {
     const steps = [
       "Payment Verification Pending",
       "Confirmed",
@@ -83,21 +92,30 @@ const Orders = () => {
               </p>
 
               <p>
-                {isCompleted(order.status, "Confirmed")
+                {isCompleted(
+                  order.status,
+                  "Confirmed"
+                )
                   ? "✅"
                   : "⭕"}{" "}
                 Payment Verified
               </p>
 
               <p>
-                {isCompleted(order.status, "Shipped")
+                {isCompleted(
+                  order.status,
+                  "Shipped"
+                )
                   ? "✅"
                   : "⭕"}{" "}
                 Shipped
               </p>
 
               <p>
-                {isCompleted(order.status, "Delivered")
+                {isCompleted(
+                  order.status,
+                  "Delivered"
+                )
                   ? "✅"
                   : "⭕"}{" "}
                 Delivered
@@ -109,26 +127,30 @@ const Orders = () => {
                 Products
               </h3>
 
-              {(order.items || []).map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-4 mb-3"
-                >
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-20 h-20 object-cover rounded"
-                  />
+              {(order.items || []).map(
+                (item, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-4 mb-3"
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-20 h-20 object-cover rounded"
+                    />
 
-                  <div>
-                    <p className="font-medium">
-                      {item.name}
-                    </p>
+                    <div>
+                      <p className="font-medium">
+                        {item.name}
+                      </p>
 
-                    <p>₹{item.price}</p>
+                      <p>
+                        ₹{item.price}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              )}
             </div>
           </div>
         ))

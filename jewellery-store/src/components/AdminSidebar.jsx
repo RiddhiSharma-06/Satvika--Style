@@ -4,18 +4,18 @@ function AdminSidebar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+  localStorage.removeItem("adminUser");
+  localStorage.removeItem("adminToken");
 
-    navigate("/admin/login");
-  };
+  navigate("/admin/login");
+};
 
   return (
     <div
       style={{
         width: "250px",
         minHeight: "100vh",
-        background: "#212529",
+        backgroundColor: "#212529",
         color: "white",
         padding: "20px",
       }}
@@ -24,31 +24,49 @@ function AdminSidebar() {
 
       <hr />
 
-      <div className="d-flex flex-column gap-3">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "20px",
+        }}
+      >
         <Link
           to="/admin/dashboard"
-          className="text-white text-decoration-none"
+          style={{
+            color: "white",
+            textDecoration: "none",
+          }}
         >
           Dashboard
         </Link>
 
         <Link
-          to="/admin/products"
-          className="text-white text-decoration-none"
-        >
-          Products
-        </Link>
-
-        <Link
           to="/admin/add-product"
-          className="text-white text-decoration-none"
+          style={{
+            color: "white",
+            textDecoration: "none",
+          }}
         >
           Add Product
         </Link>
 
         <Link
+          to="/admin/products"
+          style={{
+            color: "white",
+            textDecoration: "none",
+          }}
+        >
+          Products
+        </Link>
+
+        <Link
           to="/admin/orders"
-          className="text-white text-decoration-none"
+          style={{
+            color: "white",
+            textDecoration: "none",
+          }}
         >
           Orders
         </Link>
