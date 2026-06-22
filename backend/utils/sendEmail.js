@@ -4,23 +4,20 @@ import nodemailer from "nodemailer";
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+  host: "smtp-relay.brevo.com",
   port: 587,
-  secure: false, // STARTTLS (important)
+  secure: false, // STARTTLS
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  tls: {
-    rejectUnauthorized: false,
-  },
+    user: process.env.EMAIL_USER,   // your Brevo login email
+    pass: process.env.EMAIL_PASS    // Brevo SMTP KEY (xsmtpsib-...)
+  }
 });
 
-transporter.verify((error, success) => {
+transporter.verify((error) => {
   if (error) {
-    console.log("❌ SMTP Error:", error);
+    console.log("❌ Brevo SMTP Error:", error);
   } else {
-    console.log("✅ SMTP Ready");
+    console.log("✅ Brevo SMTP Ready");
   }
 });
 
