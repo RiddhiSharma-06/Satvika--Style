@@ -3,52 +3,41 @@ import nodemailer from "nodemailer";
 
 dotenv.config();
 
-// ❗ Validate env variables early (IMPORTANT for debugging)
-if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-  console.error("❌ EMAIL ENV MISSING:");
-  console.error("EMAIL_USER:", process.env.EMAIL_USER);
-  console.error("EMAIL_PASS:", process.env.EMAIL_PASS);
-}
-
-// Create transporter
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false, // STARTTLS (important)
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+  tls: {
+    rejectUnauthorized: false,
+  },
 });
 
-// Verify transporter on startup (VERY USEFUL on Render)
 transporter.verify((error, success) => {
   if (error) {
-    console.log("❌ Gmail Transport Error:", error);
+    console.log("❌ SMTP Error:", error);
   } else {
-    console.log("✅ Gmail Transport Ready");
+    console.log("✅ SMTP Ready");
   }
 });
 
 const sendEmail = async (to, subject, text) => {
   try {
-    const mailOptions = {
+    const info = await transporter.sendMail({
       from: `"Satvika Style" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       text,
-    };
+    });
 
-    const info = await transporter.sendMail(mailOptions);
-
-    console.log("✅ Email sent successfully");
-    console.log("Message ID:", info.messageId);
-
+    console.log("✅ Email sent:", info.messageId);
     return info;
   } catch (error) {
-    console.log("🔥 EMAIL SENDING FAILED:");
-    console.log("Name:", error.name);
-    console.log("Message:", error.message);
-    console.log("Full Error:", error);
-
+    console.log("🔥 EMAIL FAILED:");
+    console.log(error);
     throw error;
   }
 };
