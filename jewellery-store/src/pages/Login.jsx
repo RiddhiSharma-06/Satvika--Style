@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import API from "../api/axios";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -9,6 +9,7 @@ function Login() {
 
   const navigate = useNavigate();
 
+  // SEND OTP
   const sendOtp = async () => {
     try {
       if (!email) {
@@ -16,46 +17,28 @@ function Login() {
         return;
       }
 
-      await axios.post(
-        "http://localhost:5000/api/auth/send-otp",
-        { email }
-      );
+      await API.post("/auth/send-otp", { email });
 
       setOtpSent(true);
-
       alert("OTP sent successfully");
     } catch (error) {
       alert(
-        error.response?.data?.message ||
-          "Failed to send OTP"
+        error.response?.data?.message || "Failed to send OTP"
       );
     }
   };
 
+  // VERIFY OTP
   const verifyOtp = async () => {
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/verify-otp",
-        {
-          email,
-          otp,
-        }
-      );
+      const res = await API.post("/auth/verify-otp", {
+        email,
+        otp,
+      });
 
-      localStorage.setItem(
-        "token",
-        res.data.token
-      );
-
-      localStorage.setItem(
-        "user",
-        JSON.stringify(res.data.user)
-      );
-
-      localStorage.setItem(
-        "isLoggedIn",
-        "true"
-      );
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      localStorage.setItem("isLoggedIn", "true");
 
       alert("Login Successful");
 
@@ -63,8 +46,7 @@ function Login() {
       window.location.reload();
     } catch (error) {
       alert(
-        error.response?.data?.message ||
-          "Invalid OTP"
+        error.response?.data?.message || "Invalid OTP"
       );
     }
   };
@@ -72,9 +54,6 @@ function Login() {
   return (
     <div className="min-h-screen flex justify-center items-center bg-pink-50">
       <div className="bg-white p-8 rounded-3xl shadow-xl w-[400px]">
-        <div className="bg-pink-100 text-pink-700 p-3 rounded-xl mb-5 text-center">
-          Login to add products to cart and place orders
-        </div>
 
         <h1 className="text-4xl font-bold text-center mb-8">
           Login
@@ -84,9 +63,7 @@ function Login() {
           type="email"
           placeholder="Email Address"
           value={email}
-          onChange={(e) =>
-            setEmail(e.target.value)
-          }
+          onChange={(e) => setEmail(e.target.value)}
           className="w-full border p-3 rounded-xl mb-4"
         />
 
@@ -103,9 +80,7 @@ function Login() {
               type="text"
               placeholder="Enter OTP"
               value={otp}
-              onChange={(e) =>
-                setOtp(e.target.value)
-              }
+              onChange={(e) => setOtp(e.target.value)}
               className="w-full border p-3 rounded-xl mb-4"
             />
 
@@ -120,10 +95,7 @@ function Login() {
 
         <p className="text-center mt-5">
           Don't have an account?{" "}
-          <Link
-            to="/signup"
-            className="text-pink-500 font-semibold"
-          >
+          <Link to="/signup" className="text-pink-500 font-semibold">
             Sign Up
           </Link>
         </p>

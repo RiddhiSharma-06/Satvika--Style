@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import API from "../api/axios";
 
 function Signup() {
   const [name, setName] = useState("");
@@ -10,6 +10,7 @@ function Signup() {
 
   const navigate = useNavigate();
 
+  // SEND OTP
   const sendOtp = async () => {
     try {
       if (!name || !email) {
@@ -17,47 +18,29 @@ function Signup() {
         return;
       }
 
-      await axios.post(
-        "http://localhost:5000/api/auth/send-otp",
-        { email }
-      );
+      await API.post("/auth/send-otp", { email });
 
       setOtpSent(true);
-
       alert("OTP sent successfully");
     } catch (error) {
       alert(
-        error.response?.data?.message ||
-          "Failed to send OTP"
+        error.response?.data?.message || "Failed to send OTP"
       );
     }
   };
 
+  // VERIFY OTP
   const verifyOtp = async () => {
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/verify-otp",
-        {
-          name,
-          email,
-          otp,
-        }
-      );
+      const res = await API.post("/auth/verify-otp", {
+        name,
+        email,
+        otp,
+      });
 
-      localStorage.setItem(
-        "token",
-        res.data.token
-      );
-
-      localStorage.setItem(
-        "user",
-        JSON.stringify(res.data.user)
-      );
-
-      localStorage.setItem(
-        "isLoggedIn",
-        "true"
-      );
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      localStorage.setItem("isLoggedIn", "true");
 
       alert("Account Created Successfully");
 
@@ -65,8 +48,7 @@ function Signup() {
       window.location.reload();
     } catch (error) {
       alert(
-        error.response?.data?.message ||
-          "Invalid OTP"
+        error.response?.data?.message || "Invalid OTP"
       );
     }
   };
@@ -74,6 +56,7 @@ function Signup() {
   return (
     <div className="min-h-screen flex justify-center items-center bg-pink-50">
       <div className="bg-white p-8 rounded-3xl shadow-xl w-[400px]">
+
         <h1 className="text-4xl font-bold text-center mb-8">
           Create Account
         </h1>
@@ -82,9 +65,7 @@ function Signup() {
           type="text"
           placeholder="Full Name"
           value={name}
-          onChange={(e) =>
-            setName(e.target.value)
-          }
+          onChange={(e) => setName(e.target.value)}
           className="w-full border p-3 rounded-xl mb-4"
         />
 
@@ -92,9 +73,7 @@ function Signup() {
           type="email"
           placeholder="Email Address"
           value={email}
-          onChange={(e) =>
-            setEmail(e.target.value)
-          }
+          onChange={(e) => setEmail(e.target.value)}
           className="w-full border p-3 rounded-xl mb-4"
         />
 
@@ -111,9 +90,7 @@ function Signup() {
               type="text"
               placeholder="Enter OTP"
               value={otp}
-              onChange={(e) =>
-                setOtp(e.target.value)
-              }
+              onChange={(e) => setOtp(e.target.value)}
               className="w-full border p-3 rounded-xl mb-4"
             />
 
@@ -128,10 +105,7 @@ function Signup() {
 
         <p className="text-center mt-5">
           Already have an account?{" "}
-          <Link
-            to="/login"
-            className="text-pink-500 font-semibold"
-          >
+          <Link to="/login" className="text-pink-500 font-semibold">
             Login
           </Link>
         </p>
